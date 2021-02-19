@@ -1,0 +1,17 @@
+/* 
+    #DEVELOPER          DATE        COMMENTS
+    #Gurpreet(1911343)   19/02/2021  did css for background, logo-style, navigationBar
+*/
+
+.bg-color-lightcyan{
+    background-color: lightcyan;
+}
+
+.logo-style{
+    width: 150px;
+    height: 150px;
+}
+
+.nav-float-right{
+    float: right;
+}
