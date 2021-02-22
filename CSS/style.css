@@ -1,6 +1,7 @@
 /* 
     #DEVELOPER          DATE        COMMENTS
     #Gurpreet(1911343)   19/02/2021  did css for background, logo-style, navigationBar
+    #Gurpreet(1911343)   21/02/2021  did css for website title, homePage text and advertisment
 */
 
 .bg-color-lightcyan{
@@ -8,10 +9,82 @@
 }
 
 .logo-style{
-    width: 150px;
+    width: 220px;
     height: 150px;
+    position: absolute;
+    top: 10px;
 }
 
-.nav-float-right{
+.navigation-bar{
+    margin-top: 25px;
     float: right;
+    width: 100%;
+}
+
+h1{
+    color:#47210b;
+}
+
+.navigation-bar ul{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #47210b;
+    float: right;
+    width: 80%
+}
+
+.navigation-bar ul li{
+    display: inline-block;
+}
+.navigation-bar ul li a{
+    text-decoration: none;
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 10px 14px;
+    border: 2px solid #47210b;
+    font-family: sans-serif;
+}
+
+.navigation-bar ul li a:hover {
+  background-color: whitesmoke;
+  color: black;
+}
+
+.website-title{
+    text-align: center;
+    font-size: 46px;
+    top: 10px;
+    margin-left: 200px;
+}
+
+.home-paragraph{
+    font-size: 19px;
+    font-family: serif;
+    height: 300px;
+    width: 500px;
+    float: right; 
+    margin: 10px 50px;
+}
+
+.copyright-info{
+    text-align: center;
+}
+
+.advertising-section{
+    margin: 50px 10px;
+    padding: 90px;
+}
+
+.basic-adv{
+    width: 500px;
+    height: 350px;
+}
+
+.gold-adv{
+    border: 5px solid red;
+    width: 600px;
+    height: 400px;
 }
