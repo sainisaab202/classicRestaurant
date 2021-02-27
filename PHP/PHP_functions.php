@@ -3,6 +3,10 @@
 #Gurpreet(1911343)   19/02/2021  Created functions for page header, page footer, Logo and navigation bar
 #Gurpreet(1911343)   21/02/2021  Declared constants for images, function for advertisment, added header for UTF-8
 #Gurpreet(1911343)   26/02/2021  Declared function for form and did all the validations
+#Gurpreet(1911343)   27/02/2021  Optimize my validations for quantity and price
+
+
+//ask teacher about name validation to accept accents with the name
 
 //Declaring some CONSTANTS
 define('FOLDER_CSS', 'CSS/');
@@ -46,9 +50,9 @@ $customerCity = "";
 $comment = "";
 $price = "";
 $quantity = "";
-$subTotal = "";
-$taxesAmount = "";
-$grandTotal = "";
+//$subTotal = "";   //because doesn't make sense to declare it as global
+//$taxesAmount = "";
+//$grandTotal = "";
 
 
 $errorProductCode = "";
@@ -120,7 +124,7 @@ function displayAdvertisment(){
 
 /**Will generate html to create form*/
 function createBuyingForm(){
-    //getting access to global variable
+    //getting access to global variable             !here i will split validation to another fn()!
     global $productCode;
     global $firstName;
     global $lastName;
@@ -137,7 +141,7 @@ function createBuyingForm(){
     global $errorPrice;
     global $errorQuantity;
     
-    //will check if submit button is clicked or not
+    //will check if submit button is clicked or not (if clicked then we do validation of fields)
     if(isset($_POST["save"])){
         $productCode = htmlspecialchars(trim($_POST['productCode']));
         $firstName = htmlspecialchars(trim($_POST['firstName']));
@@ -168,7 +172,7 @@ function createBuyingForm(){
             $errorFirstName = "First name cannot be empty.";
         }else if(mb_strlen($firstName) > FORM_MAX_FNAME){
             $errorFirstName = "First name cannot contain more than ".FORM_MAX_FNAME." characters.";
-        }else if(!ctype_alpha($firstName)){
+        }else if(!ctype_alpha($firstName)){         //check if firstName contains only alphabets
             $errorFirstName = "First name should only contains alpha characters.";
         }
         
@@ -198,6 +202,8 @@ function createBuyingForm(){
         #Validate Price
         if($price == ""){
             $errorPrice = "Price cannot be empty and should be in between 0$ and ".FORM_MAX_PRICE."$.";
+        }else if(!is_numeric($price)){      //if its only numbers 0-9 and contain decimal points
+            $errorPrice = "Price can only contains 0-9 digits and can have decimal numbers.";
         }else if($price < 0 || $price > FORM_MAX_PRICE){
             $errorPrice = "Price should be between 0$ and ".FORM_MAX_PRICE."$.";
         }
@@ -205,19 +211,51 @@ function createBuyingForm(){
         #Validate Quantity
         if($quantity == ""){
             $errorQuantity = "Quantity cannot be empty and should be in between 1 and ".FORM_MAX_QUANTITY.".";
+        }else if(!ctype_digit($quantity)){      //if its only digits without decimal point
+            $errorQuantity = "Quantity should be between 1 and ".FORM_MAX_QUANTITY." and without any decimal points.";
         }else if($quantity < 1 || $quantity > FORM_MAX_QUANTITY){
             $errorQuantity = "Quantity should be between 1 and ".FORM_MAX_QUANTITY.".";
         }
         
         #######
-        #If all validation is successful then continue
+        #If all validation is successful then continue to create array of all data
         if($errorProductCode == "" && $errorFirstName == "" && $errorLastName == "" && $errorCustomerCity == "" && $errorComment == "" && $errorPrice == "" && $errorQuantity == ""){
             echo "<p style='color: red'> everything is good</p>";
+            ?>
+<!--        <script>alert("Your order is confirmed");</script>-->
+            <?php
             $subTotal = round($price * $quantity, FORM_NUMS_AFTER_DECIMAL);
             $taxesAmount = round($subTotal * (FORM_LOCAL_TAX_PER/100),FORM_NUMS_AFTER_DECIMAL);
             $grandTotal = $subTotal + $taxesAmount;
-
+            
+            //array creation of all information
+            $anOrder = array($productCode, $firstName, $lastName, $customerCity,
+                        $comment, $price, $quantity, $subTotal, $taxesAmount, $grandTotal);
+            
+            //just to check if array is created properly
+            var_dump($anOrder);
+            $jsonString = json_encode($anOrder);
+            var_dump($jsonString);
         }
+    }
+    
+    //to clear all the fields in the form
+    if(isset($_POST['reset'])){
+        $productCode = "";
+        $firstName = "";
+        $lastName = "";
+        $customerCity = "";
+        $comment = "";
+        $price = "";
+        $quantity = "";
+
+        $errorProductCode = "";
+        $errorFirstName = "";
+        $errorLastName = "";
+        $errorCustomerCity = "";
+        $errorComment = "";
+        $errorPrice = "";
+        $errorQuantity = "";
     }
     
     ?>
@@ -261,7 +299,7 @@ function createBuyingForm(){
                 </p>
                 <p class="button-section">
                     <input type="submit" value='Submit' name="save" class="button"/>
-                    <input type="reset" value='Clear' class="button"/>
+                    <input type="submit" value='Clear' name="reset" class="button"/>
                 </p>
             </form>
         </div>
