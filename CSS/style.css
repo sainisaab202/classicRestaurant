@@ -2,6 +2,8 @@
     #DEVELOPER          DATE        COMMENTS
     #Gurpreet(1911343)   19/02/2021  did css for background, logo-style, navigationBar
     #Gurpreet(1911343)   21/02/2021  did css for website title, homePage text and advertisment
+    #Gurpreet(1911343)   26/02/2021  did css for form and buttons
+    
 */
 
 .bg-color-lightcyan{
@@ -87,4 +89,47 @@ h1{
     border: 5px solid red;
     width: 600px;
     height: 400px;
+}
+
+/* for form page -----------------------------------------*/
+.buying-form{
+    margin: 150px auto;
+    width: 500px;
+    border: 5px dotted #47210b;
+    padding: 20px 15px;
+}
+
+.buying-form h2{
+    text-align: center;
+    color:#47210b;
+    font-family: sans-serif;
+    letter-spacing: 1px;
+}
+
+.buying-form label{
+    font-size: 15px;
+    font-family: monospace;
+}
+
+.buying-form .error-code-label{
+    font-size: 15px;
+    color: red;
+}
+
+.buying-form .button{
+    background-color: white;
+    color: #47210b;
+    border: 2px solid #47210b;
+    padding: 10px 20px;
+    font-size: 15px;
+    margin: 12px 7px 0px 7px;
+}
+
+.buying-form .button:hover{
+    background-color: #47210b;
+    color: white;
+}
+
+.button-section{
+    text-align: center;
 }
