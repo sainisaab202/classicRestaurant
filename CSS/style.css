@@ -3,6 +3,8 @@
     #Gurpreet(1911343)   19/02/2021  did css for background, logo-style, navigationBar
     #Gurpreet(1911343)   21/02/2021  did css for website title, homePage text and advertisment
     #Gurpreet(1911343)   26/02/2021  did css for form and buttons
+    #Gurpreet(1911343)   01/03/2021  modified css for advertisment
+    #Gurpreet(1911343)   03/03/2021  added css for order page and table in that page
     
 */
 
@@ -73,16 +75,18 @@ h1{
 
 .copyright-info{
     text-align: center;
+    margin-top: 50px;
 }
 
+body{height:100%}
 .advertising-section{
     margin: 50px 10px;
     padding: 90px;
 }
 
 .basic-adv{
-    width: 500px;
-    height: 350px;
+    width: 350px;
+    height: 250px;
 }
 
 .gold-adv{
@@ -91,7 +95,7 @@ h1{
     height: 400px;
 }
 
-/* for form page -----------------------------------------*/
+/* for form Buying page -----------------------------------------*/
 .buying-form{
     margin: 150px auto;
     width: 500px;
@@ -132,4 +136,80 @@ h1{
 
 .button-section{
     text-align: center;
+}
+
+/*-------------------Orders page-------------------- */
+.error-file{
+    font-size: 24px;
+    color: red;
+    text-align: center;
+    margin: 100px;
+}
+
+.table-order table, .table-order th, .table-order td{
+    border: 2px double #004d4d;
+    border-collapse: collapse;
+}
+
+.table-order{
+    margin: 140px 0px;
+}
+
+.table-order h2{
+    text-align: center;
+    font-family: sans-serif;
+    letter-spacing: 2px;
+}
+
+.table-order table{
+    margin: 10px auto;
+}
+
+.table-order th, .table-order td{
+    text-align: left;
+    padding: 8px;
+}
+
+.table-order tr:nth-child(odd){
+    background-color: #99ffff;
+}
+
+.table-order th{
+    background-color: #00ffff;
+}
+
+/* For parameters in URL----*/
+.arguPrint-background{
+    background-color: white;
+}
+
+.arguPrint-opacity{
+    opacity: 0.3;
+}
+
+.arguColor-red{
+    color: red;
+}
+
+.arguColor-orange{
+    color: orange;
+}
+
+.arguColor-green{
+    color: green;
+}
+
+/* For download the cheetsheat */
+.cheatSheet-download{
+    font-family: cursive;
+    font-size: 15px;
+}
+
+.cheatSheet-download a{
+    text-decoration: none;
+    color: #47210b;
+}
+
+.cheatSheet-download a:hover{
+    color: blue;
 }

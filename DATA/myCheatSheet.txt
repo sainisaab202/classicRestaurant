@@ -1,0 +1,158 @@
+----To Checksum for any downloaded software with fciv
+C:\fciv\fciv.exe -sha1 "c:\Users\GurPreet SaiNi\Downloads\xampp-windows-x64-7.4.13-1-VC15-installer.exe"
+
+----In xampp
+c:\xampp\htdocs\ : is a public folder which contain all websites
+/opt/lampp/htdoc  : is public folder for linux
+
+.\cars\asdf.html : is for files/folders in current folder
+..\cars\qwer.html : is for files/folders in previous directory
+
+php.ini config: contains headerfiles for a website.
+
+----			----HEADERS----
+always use UTF-8
+	1. check your project default charset = utf-8
+	2. send network headers BEFORE echoing any text (often done automatically by browser)
+		header('Content-Type: text/html; charset=UTF-88')
+	3. write meta tag in your code to use utf-8
+
+//to send the user to another page
+header('Location: www.anyWebsite.com');
+----
+to force browser to load everything again use ctrl+F5
+
+----
+. (dot) is use to concatnate strings in php
+-> is use to access properties/methods of an object
+\ is use to escape a character like a space, a quote, or any charater
+
+---- TO DECLARE CONSTANT
+define(constantName, constantValue)	--both should be in double quotes / single
+
+---- Debugging variable
+echo $variable;		# to display value
+var_dump($variable);	# very technical info, all info datatype, size and value
+print_r($variable);	# not all info, but it will be much easier to read
+
+---- Double quotes and single quotes
+using a $variable inside double quotes works perfectly
+BUT in single quotes, it will show the name of varable as it is.
+
+---- Functions
+strlen($variableName) : will show the length of the string. *its a non utf-8 function
+mb_strlen($variableName) : is same as strlen() but support utf-8 means é count as 1 char.
+			mb stands for multi-byte string lenght.
+substr(string, startingIndex, length): returns a substring from specified string, starting, length
+strpos(string, "text2search"): returns a starting position of your text in the specified string.
+str_replace(search, replace, fullString) : to replace some text in a given string.
+str_ireplace(search, replace, fullString) : non case sensetive and same work as str_replace.
+explode("seprator", string): returns an array of strings seprated by specified seprator.
+implode("seprator", array): returns a string by combining all strings in specified array.
+
+count(array/object): returns length of the array or a countable object.
+ord(aCharacter): return the binaryValue(codePoint) of the first byte of character.
+chr(codePoint): return the character related to the specified codePoint.
+
+gettype($variable): return the type of the variable
+settype($variable, 'newDataType'): change the variable datatype into specified and RETURNS boolean
+		another way to convert is 	$one = (string)$two 	//this is casting
+		intval($variable)	//this will ignore the characters
+
+is_numeric($variable): return true is variable is numeric can be decimal numbers as well.
+ctype_digit($variable): return true only if variable contain only 0-9 digits else false.
+is_nan($variable): return true if variable is not a numeric.
+
+--Array
+#indexed arrays
+        ###sort($myAssociativeArray);       //sort work only with indexed array
+        ###rsort($myAssociativeArray);      //sort by reverse order
+        #associativeArray       //its case senstive
+//        asort($myAssociativeArray);         //sort by valuse
+//        arsort($myAssociativeArray);        //value reversed sort
+//        ksort($myAssociativeArray);         //to sort by keys
+//        krsort($myAssociativeArray);        //to reverse sort by keys
+        foreach ($myAssociativeArray as $value){    //for values only
+
+array_push($arrayName, item1,item2....): to insert values into an array at the end.
+array_pop($arrayName): to remove the last item in an array.
+array_shift($arrayName): to remove the first item in an array.
+unset($arrayName[index]): to remove item on a specific index of an array.
+
+trim($variable): return a string by removing leading and trailing spaces.
+
+--JSON javascript object notation
+we cannot send array directly one pc to another so first we need to convert it into string
+json_encode($arrayVariable): will return a JSON string (convert array into json string)
+json_decode($JsonStringVar): will return an object (convert jsonString into object)
+
+--Datetime
+= new DateTime('yyyy-mm-dd'): will create an object of Datetime
+strtotime('anydate'): will return seconds elapse 1970 otherwise return false (validate date)
+checkdate(dd,mm,yyy): will return true if date is valid otherwise false
+date("D-M-Y"): will return a string of current date in the specified formate
+getdate(): will return an array contaning current timestamp if nothing is specifed
+
+--Userdefine functions
+always use optional parameters at the end of function defintion
+like: function functionName(par1, par2, par3=100)
+here par3 is optional and we can use function by sending only 2 parameters
+-	use & to receive parameter as a reference
+- 	use global keyword in front of globalVariableName use access global variable in a function
+
+-	Use include 'file_path' to import functions from other files
+	also use include_once to ignore import repetions errors.
+	require, require_once is to get import fuctions and if file is not availabe it will 
+		through error.
+
+----form GET and POST method	:to send data from client to server with any request
+<form method="GET":	is used and worked with url (everything is saved in the browser history)
+<from method="POST":	It is never saved in the browser history and didn't use url & more secure.
+	<form action="index.php" method="POST>
+	give name to all of our fields
+	
+	#superglobal variables
+    #   $_POST array containing all the data you POSTed
+    #   $_GET array coontaining all the data you GET
+    #   $_REQUEST either $_POST or $_GET
+
+----To validate strings/ text-inputs
+	filter_input(INPUT_POST, "firstName", FILTER_SANITIZE_STRING);
+	echo "<br> Filter #3 htmlspecialchars: ".htmlspecialchars($firstName);
+
+---------------------------------------------------------------------------------------------
+-----File operations	//r: to read, w: to write, a: append	*file will save in htdocs.
+
+$variable = fopen("fileName.ex","r/w/a"):	will open a file and assign it to a variable.
+
+fopen("fileName.ex","r/w/a") or die("file doesn't exist);  will avoid error if file is not there.
+
+fwrite($variable,"your string or" $variable):	will help us to write in a file
+
+fclose($variable): will close file.
+
+file_put_contents("filename.xx", "your stuff to write", FILE_APPEND):	will do same but slow
+
+
+
+-----------------errors
+compile error: code does not start
+runtime error: division by zero
+logical error: doing something wrong logically
+
+---- starting new website
+
+----GIT
+green: add
+blue: modify
+red: delete
+
+black: save correctly in Git
+
+1) Create an empty project 
+2) Select Team->Git->Initialize repository
+3) Make sure the correct folder is selected. if not, choose from browser.
+(These 3 steps to creste the .git folder)
+
+4) Everyday of work, right click on Project -> Git -> Commit
+5) Type-in commit message and commit your work.
