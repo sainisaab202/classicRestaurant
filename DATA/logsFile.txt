@@ -1,0 +1,3 @@
+An EXCEPTION occured in the file C:\xampp\htdocs\1911343\index.php on line 26, Error: You got one more exception at 2021-03-05 21:24:00.742293 with browser Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.182 Safari/537.36 Edg/88.0.705.81.
+An ERROR occured in the file C:\xampp\htdocs\1911343\index.php, on line 29. Error: 2 : Division by zero, at 2021-03-05 21:24:50.879895 with browser: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.182 Safari/537.36 Edg/88.0.705.81.
+

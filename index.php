@@ -2,7 +2,9 @@
 #DEVELOPER          DATE        COMMENTS
 #Gurpreet(1911343)  19/02/2021  Created NetBeans project and related folders
 #Gurpreet(1911343)  19/02/2021  set up the git repository, Importing functions and calling to page header and footer
-#Gurpreet(1911343   21/02/2021  Added paragraph text and advertisment section
+#Gurpreet(1911343)  21/02/2021  Added paragraph text and advertisment section
+#Gurpreet(1911343)  05/03/2021  Testing ErrorHandling and Exception Handling by creating errors
+#Gurpreet(1911343)  05/03/2021  Project completed 100%
 
 
 #--------------------------------------------------------------
@@ -16,6 +18,17 @@ require_once PHP_FUNCTIONS;
 
 // Calling to generate header part of html
 createPageHeader("Home");
+
+////---------------------------------------------------------
+////to create exception
+//throw new Exception("You got one more");
+
+////to create error
+//$number = 1;
+//if($number / 0 == 10){
+//    echo "Never going to happen";
+//}
+////---------------------------------------------------------
 ?>
     <div class='home-paragraph'>
         <p>Mouthwatering Indian cuisine Classic Restaurant. Newly opened at a walking distance from Parc Metro station.
@@ -28,4 +41,4 @@ createPageHeader("Home");
 
 //Calling closing part of html
 createPageFooter();
-?>
+

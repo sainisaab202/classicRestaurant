@@ -8,8 +8,8 @@
 #                                Also commented the validation for numbers and symbols for first name, last name and city
 #                                Declared function related to create table and check parameter URL
 #                                Declared some constants for files and fileOperations
-
-//to ask if we can use only one \n or \r in writing file
+#Gurpreet(1911343)   05/03/2021  Declaration of Error and Exception handeling and write errors into log files
+#                                Added header to prevent using browser cache                                 
 
 //Declaring some CONSTANTS
 define('FOLDER_CSS', 'CSS/');
@@ -35,17 +35,21 @@ define('MONEY_SIGN', '$');
 define('ARGU_PRINT',"print");
 define('ARGU_COLOR',"color");
 
-
 //constant for advertisment who pays us more
 define('HIGH_ADV_PAYER', IMG_ADV_SAMOSE);
 
-//Website page
+//Website pages
 define('HOME_PAGE', 'index.php');
 define('BUYING_PAGE', 'buying.php');
 define('ORDER_PAGE', 'order.php');
 
 //CopyRight name
 define('COPYRIGHT_NAME', 'GurPreet SaiNi (1911343)');
+
+//turn debug true if you are modifying code else keep it false
+define('DEBUG', false);
+//define('DEBUG', true);
+define('FILE_LOGS', FOLDER_DATA.'logsFile.txt');
 
 //constants for Minumum and maximum for forms
 define('FORM_MAX_PROD_CODE',12);
@@ -67,10 +71,6 @@ $customerCity = "";
 $comment = "";
 $price = "";
 $quantity = "";
-//$subTotal = "";   //because doesn't make sense to declare it as global
-//$taxesAmount = "";
-//$grandTotal = "";
-
 
 $errorProductCode = "";
 $errorFirstName = "";
@@ -80,7 +80,7 @@ $errorComment = "";
 $errorPrice = "";
 $errorQuantity = "";
 
-//for css with parameters
+//for css with URL parameters
 $arguBackground = "";
 $arguOpacity = "";
 $arguColor = array("red"=>"", "orange"=>"", "green"=>"");
@@ -89,8 +89,15 @@ $arguColor = array("red"=>"", "orange"=>"", "green"=>"");
 /**Will generage header part of website page 
  * @Param $title the title for your webpage */
 function createPageHeader($title){
-    global $arguBackground;
+    //type of our document
     header('Content-Type: text/html; charset=UTF-8');
+    //to avoid using browser cache
+    header("Expires: Thu, 14 May 1998 08:00:00 GMT");
+    header("Cache-Control: no-cache");
+    header("Pragma: no-cache");
+    //to set error/exception handler
+    handleAllErrors();
+    global $arguBackground;
     ?>
     <!DOCTYPE html>
         <html>
@@ -142,13 +149,13 @@ function displayAdvertisment(){
     shuffle($adv);
     $imgClass = $adv[0] == HIGH_ADV_PAYER ? 'gold-adv':'basic-adv';
     ?>
-        <img class='adv <?php echo $imgClass ?>' src="<?php echo $adv[0] ?>" alt='advertisment image'>
+        <img class='adv <?php echo $imgClass ?>' src="<?php echo $adv[0] ?>" alt='advertisment image'/>
     <?php
 }
 
 /**Will generate html to create form*/
 function createBuyingForm(){
-    //getting access to global variable             !here i will split validation to another fn()!
+    //getting access to global variable
     global $productCode;
     global $firstName;
     global $lastName;
@@ -308,37 +315,37 @@ function createBuyingForm(){
             <h2>Buying Form</h2>
             <form action='buying.php' method='POST'>
                 <p>
-                    <label>Product Code : </label><br>
+                    <label>Product Code : </label><br/>
                     <input type="text" name="productCode" value ="<?php echo $productCode?>"/>
                     <label class="error-code-label">* <?php echo $errorProductCode ?></label>
                 </p>
                 <p>
-                    <label>Customer First Name : </label><br>
+                    <label>Customer First Name : </label><br/>
                     <input type="text" name="firstName" value="<?php echo $firstName ?>"/>
                     <label class="error-code-label">* <?php echo $errorFirstName ?></label>
                 </p>
                 <p>
-                    <label>Customer Last Name : </label><br>
+                    <label>Customer Last Name : </label><br/>
                     <input type="text" name="lastName" value="<?php echo $lastName ?>"/>
                     <label class="error-code-label">* <?php echo $errorLastName ?></label>
                 </p>
                 <p>
-                    <label>Customer City : </label><br>
+                    <label>Customer City : </label><br/>
                     <input type="text" name="customerCity" value="<?php echo $customerCity ?>"/>
                     <label class="error-code-label">* <?php echo $errorCustomerCity ?></label>
                 </p>
                 <p>
-                    <label>Comments : </label><br>
+                    <label>Comments : </label><br/>
                     <textarea name="comment" rows="3" cols="30" maxlength="200"><?php echo $comment ?></textarea>
                     <label class="error-code-label"><?php echo $errorComment ?></label>
                 </p>
                 <p>
-                    <label>Price : </label><br>
+                    <label>Price : </label><br/>
                     <input type="number" name="price" step=".01" value="<?php echo $price ?>"/>
                     <label class="error-code-label">* <?php echo $errorPrice ?></label>
                 </p>
                 <p>
-                    <label>Quantity : </label><br>
+                    <label>Quantity : </label><br/>
                     <input type="number" name="quantity" value="<?php echo $quantity ?>"/>
                     <label class="error-code-label">* <?php echo $errorQuantity ?></label>
                 </p>
@@ -436,4 +443,59 @@ function checkUrlParameters(){
         }
         
     }
+}
+
+
+/** this called when PHP function fails */
+function manageError($errorNumber, $errorString, $errorFile, $errorLine){
+    //details info to create error message
+    $date = new DateTime(); 
+    $now = $date->format('Y-m-d H:i:s.u');
+    $browser = $_SERVER["HTTP_USER_AGENT"];
+    $ErrorInfo = "An ERROR occured in the file $errorFile, on line $errorLine. "
+            . "Error: $errorNumber : $errorString, at $now with browser: $browser.";
+    
+    if(DEBUG==false){
+        //Message for end-user
+        echo "An ERROR occured on the website. Please consult the log for more details.";
+        
+        //here we need to save error in a file
+        $myFileHandler = fopen(FILE_LOGS, APPEND_FILE) or die("Writing ERROR in log file Failed!");
+        fwrite($myFileHandler, $ErrorInfo.NEXTLINE);
+        fclose($myFileHandler);
+    }else{
+        //detail info for the developers
+        echo $ErrorInfo;
+    }
+    die();
+}
+
+/** this called when user-defined function fails */
+function manageExceptions($error){
+    //details info to create exception message
+    $date = new DateTime(); 
+    $now = $date->format('Y-m-d H:i:s.u');
+    $browser = $_SERVER["HTTP_USER_AGENT"];
+    $ExcepInfo = "An EXCEPTION occured in the file ". $error->getFile()." on line ".$error->getLine()
+            . ", Error: ".$error->getMessage()." at $now with browser $browser.";
+            
+    if(DEBUG==false){
+        //Message for end-user
+        echo "An EXCEPTION occured on the website. Please consult the log for more details.";
+        
+        //here we need to save error in a file
+        $myFileHandler = fopen(FILE_LOGS, APPEND_FILE) or die("Writing EXCEPTION in log file Failed!");
+        fwrite($myFileHandler, $ExcepInfo.NEXTLINE);
+        fclose($myFileHandler);
+    }else{
+        //detail info for the developers
+        echo $ExcepInfo;
+    }
+    die();
+}
+
+/** This function will set All the error in a log file */
+function handleAllErrors(){
+    set_error_handler("manageError");
+    set_exception_handler("manageExceptions");
 }
