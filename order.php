@@ -3,7 +3,7 @@
 #Gurpreet(1911343)   21/02/2021  connecting page with others and puting some text for test
 #Gurpreet(1911343)   03/03/2021  calling of function to check any parameter in URL
 #                                created div for table, download and call to the function 
-
+#Gurpreet(1911343)   28/03/2021  added little icon near download cheat sheet option
 
 #--------------------------------------------------------------
 #constants Declaration
@@ -25,7 +25,7 @@ createPageHeader("Orders");
         ?>
     </div>
     <div class="cheatSheet-download">
-        Download my Cheat-Sheet <a href="<?php echo FILE_CHEATSHEET ?>" download="">Here</a>.
+        Download my Cheat-Sheet 👉 <a href="<?php echo FILE_CHEATSHEET ?>" download="">Here</a>.
     </div>
 <?php
 

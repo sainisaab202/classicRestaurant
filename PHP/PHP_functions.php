@@ -9,7 +9,8 @@
 #                                Declared function related to create table and check parameter URL
 #                                Declared some constants for files and fileOperations
 #Gurpreet(1911343)   05/03/2021  Declaration of Error and Exception handeling and write errors into log files
-#                                Added header to prevent using browser cache                                 
+#                                Added header to prevent using browser cache   
+#Gurpreet(1911343)   28/03/2021  corrected my tables for orders by putting th inside tr
 
 //Declaring some CONSTANTS
 define('FOLDER_CSS', 'CSS/');
@@ -371,16 +372,18 @@ function createOrdersTable(){
         ?>
                 <h2>Your all orders</h2>
                 <table>
-                    <th>Product ID</th>
-                    <th>First name</th>
-                    <th>Last name</th>
-                    <th>City</th>
-                    <th>Comments</th>
-                    <th>Price</th>
-                    <th>Quantity</th>
-                    <th>Subtotal</th>
-                    <th>Taxes</th>
-                    <th>Grand total</th>
+                    <tr>
+                        <th>Product ID</th>
+                        <th>First name</th>
+                        <th>Last name</th>
+                        <th>City</th>
+                        <th>Comments</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Subtotal</th>
+                        <th>Taxes</th>
+                        <th>Grand total</th>
+                    </tr>
         <?php
         //to read file line by line until end of file
         while(!feof($myFileHandler)){
