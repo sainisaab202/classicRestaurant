@@ -11,6 +11,8 @@
 #Gurpreet(1911343)   05/03/2021  Declaration of Error and Exception handeling and write errors into log files
 #                                Added header to prevent using browser cache   
 #Gurpreet(1911343)   28/03/2021  corrected my tables for orders by putting th inside tr
+#Gurpreet(1911343)   15/04/2021  Created key and certificate.
+#                                Redirected to secure connection(HTTPS) if a request got from http
 
 //Declaring some CONSTANTS
 define('FOLDER_CSS', 'CSS/');
@@ -48,8 +50,8 @@ define('ORDER_PAGE', 'order.php');
 define('COPYRIGHT_NAME', 'GurPreet SaiNi (1911343)');
 
 //turn debug true if you are modifying code else keep it false
-define('DEBUG', false);
-//define('DEBUG', true);
+//define('DEBUG', false);
+define('DEBUG', true);
 define('FILE_LOGS', FOLDER_DATA.'logsFile.txt');
 
 //constants for Minumum and maximum for forms
@@ -90,6 +92,11 @@ $arguColor = array("red"=>"", "orange"=>"", "green"=>"");
 /**Will generage header part of website page 
  * @Param $title the title for your webpage */
 function createPageHeader($title){
+    //To make connection Secure we only use HTTPS and will redirect to HTTPS if it is http
+    if(!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] != "on"){
+        header("Location: https://".$_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+        exit();
+    }
     //type of our document
     header('Content-Type: text/html; charset=UTF-8');
     //to avoid using browser cache
