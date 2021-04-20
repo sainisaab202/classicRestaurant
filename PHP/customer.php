@@ -4,6 +4,9 @@
 #Gurpreet(1911343)   17/04/2021  Created getters and setters for attributes
 #                                Declared some constants for max and min length
 #Gurpreet(1911343)   18/04/2021  Created methods: load, login, save, delete
+#Gurpreet(1911343)   19/04/2021  Added load function call if login is successfull
+#                                Removed minimum length validation for password
+#                                and now we just will put hash password method inside our setter
 
 
 
@@ -24,7 +27,6 @@ class customer{
     const MIN_LENGTH_POSTALCODE = 6;
     const MAX_LENGTH_USERNAME = 12;
     const MAX_LENGTH_PASSWORD = 255;
-    const MIN_LENGTH_PASSWORD = 60;
     const MAX_LENGTH_UUID = 36;
     
     //local variables
@@ -200,8 +202,10 @@ class customer{
     }
     
     /**
+     *  before type $password is a hashed password calculated with password_hash()
      * 
-     * @param type $password is a hashed password calculated with password_hash()
+     *  now method will calculates hashed password with password_hash()
+     * @param type $password is a string 
      * @return string An empty string "" if password is valid otherwise returns error as string
      */
     public function setPassword($password){
@@ -210,10 +214,8 @@ class customer{
             return "Password cannot be empty.";
         }else if(mb_strlen($password) > self::MAX_LENGTH_PASSWORD){
             return "Password cannot contain more than ". self::MAX_LENGTH_PASSWORD." characters.";
-        }else if(mb_strlen($password) < self::MIN_LENGTH_PASSWORD){
-            return "Password must uses a hashed method before saving.(CONTACT your DEVELOPER)";
-        }else{
-            $this->password = trim($password);
+        }else{                  //here we are hashing our password (encrypting) and then saving into variable
+            $this->password = password_hash(trim($password), PASSWORD_DEFAULT);
             return "";
         }
     }
@@ -253,6 +255,7 @@ class customer{
                 //closing our statement
                 $PDOStatement->closeCursor();
                 $PDOStatement = null;
+                $this->load($row["customer_uuid"]);
                 return $row["customer_uuid"];
             }else{
                 //closing our statement

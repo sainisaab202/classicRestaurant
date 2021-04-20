@@ -5,6 +5,7 @@
     #Gurpreet(1911343)   26/02/2021  did css for form and buttons
     #Gurpreet(1911343)   01/03/2021  modified css for advertisment
     #Gurpreet(1911343)   03/03/2021  added css for order page and table in that page
+    #Gurpreet(1911343)   19/04/2021  added css for Login and logout form
     
 */
 
@@ -212,4 +213,60 @@ body{height:100%}
 
 .cheatSheet-download a:hover{
     color: blue;
+}
+
+/*------------------------------------------------PROJECT part 3-------------------------------*/
+
+/* For login logout form */
+.login-logout-form{
+    margin: 120px auto 50px;
+    width: 500px;
+    border: 3px dotted #47210b;
+    padding: 10px 15px;
+}
+
+.login-logout-form h2{
+    text-align: center;
+    color:#47210b;
+    font-family: sans-serif;
+    letter-spacing: 1px;
+}
+
+.login-logout-form label{
+    font-size: 15px;
+    font-family: monospace;
+}
+
+.login-logout-form .error-code-label{
+    font-size: 15px;
+    color: red;
+}
+
+.login-logout-form .button{
+    background-color: white;
+    color: #47210b;
+    border: 2px solid #47210b;
+    padding: 10px 20px;
+    font-size: 15px;
+    margin: 12px 7px 0px 7px;
+}
+
+.login-logout-form .button:hover{
+    background-color: #47210b;
+    color: white;
+}
+
+.button-section{
+    text-align: center;
+}
+
+/* logout form*/
+.logout-form{
+    margin: 120px 50px 50px auto;
+    width: 400px;
+    border: 3px dotted #47210b;
+    padding: 0px 0px;
+}
+.welcome-color{
+    color: #e4452a;
 }

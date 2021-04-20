@@ -13,6 +13,11 @@
 #Gurpreet(1911343)   28/03/2021  corrected my tables for orders by putting th inside tr
 #Gurpreet(1911343)   15/04/2021  Created key and certificate.
 #                                Redirected to secure connection(HTTPS) if a request got from http
+#Gurpreet(1911343)   18/04/2021  Declared some constants related to classes
+#Gurpreet(1911343)   19/04/2021  Declared function to create login and logout form
+#                                Declared constant for new page register.php
+#                                Defining function for register form
+
 
 //Declaring some CONSTANTS
 define('FOLDER_CSS', 'CSS/');
@@ -45,6 +50,7 @@ define('HIGH_ADV_PAYER', IMG_ADV_SAMOSE);
 define('HOME_PAGE', 'index.php');
 define('BUYING_PAGE', 'buying.php');
 define('ORDER_PAGE', 'order.php');
+define('REGISTER_PAGE', 'register.php');
 
 //CopyRight name
 define('COPYRIGHT_NAME', 'GurPreet SaiNi (1911343)');
@@ -83,10 +89,47 @@ $errorComment = "";
 $errorPrice = "";
 $errorQuantity = "";
 
+//for login stuff
+$currentCustomer = "";
+$errorUserName = "";
+$errorPassword = "";
+$loginFailed = "";
+
+//for register stuff
+$address = "";
+$city = "";
+$province = "";
+$postalCode = "";
+$userName = "";
+$password = "";
+
+$errorAddress = "";
+$errorCity = "";
+$errorProvince = "";
+$errorPostalCode = "";
+//this and some other we already have for other stuff
+//$errorUserName = "";
+//$errorPassword = "";
+
 //for css with URL parameters
 $arguBackground = "";
 $arguOpacity = "";
 $arguColor = array("red"=>"", "orange"=>"", "green"=>"");
+
+//project part 3 variables starts here
+//constants for our files which contains plural class
+
+define("CLASS_CUSTOMERS", 'customers.php');
+define("CLASS_PRODUCTS", 'products.php');
+define("CLASS_PURCHASES", 'purchases.php');
+
+//we can remove require of singular classes becuase we already import/require_once inside plural classes
+//require_once CLASS_CUSTOMER;
+require_once CLASS_CUSTOMERS;
+//require_once CLASS_PRODUCT;
+require_once CLASS_PRODUCTS;
+//require_once CLASS_PURCHASE;
+require_once CLASS_PURCHASES;
 
 
 /**Will generage header part of website page 
@@ -105,7 +148,9 @@ function createPageHeader($title){
     header("Pragma: no-cache");
     //to set error/exception handler
     handleAllErrors();
+    session_start();
     global $arguBackground;
+    
     ?>
     <!DOCTYPE html>
         <html>
@@ -119,6 +164,10 @@ function createPageHeader($title){
     <?php
         createLogo();
         createNavigationMenu();
+        //will show only if its not register page
+        if(strtolower($title) != "register"){
+            createLoginLogoutForm();
+        }
 }
 
 /**Will generate footer part of webpage */
@@ -161,7 +210,7 @@ function displayAdvertisment(){
     <?php
 }
 
-/**Will generate html to create form*/
+/**Will generate html to create buying form*/
 function createBuyingForm(){
     //getting access to global variable
     global $productCode;
@@ -321,7 +370,7 @@ function createBuyingForm(){
     ?>
         <div class="buying-form">
             <h2>Buying Form</h2>
-            <form action='buying.php' method='POST'>
+            <form action='<?php echo BUYING_PAGE ?>' method='POST'>
                 <p>
                     <label>Product Code : </label><br/>
                     <input type="text" name="productCode" value ="<?php echo $productCode?>"/>
@@ -508,4 +557,209 @@ function manageExceptions($error){
 function handleAllErrors(){
     set_error_handler("manageError");
     set_exception_handler("manageExceptions");
+}
+
+//------------------------------------------------------------------------project 3rd
+/**
+ * will generate HTML for login and logout form
+ */
+function createLoginLogoutForm(){
+    global $currentCustomer;
+    global $errorUserName;
+    global $errorPassword;
+    global $loginFailed;
+    
+    if(isset($_POST["login"])){
+        $userName = htmlspecialchars(trim($_POST['userName']));
+        $password = htmlspecialchars(trim($_POST['password']));
+        
+        if($userName == ""){
+            $errorUserName = "UserName cannot be empty.";
+        }
+        if($password == ""){
+            $errorPassword = "Password cannot be empty.";
+        }
+        
+        if($errorUserName == "" && $errorPassword == ""){
+            //creating object 
+            $currentCustomer = new customer();
+            //validating username and password
+            if($currentCustomer->login($userName, $password) != null){
+                //saving our customer uuid inside global session variable
+                //this one is just in case thing actually we gonna use the bottom one
+                $_SESSION['customer_uuid'] = $currentCustomer->getCustomer_uuid();
+                
+                //here just creating object for customer inside global session variable
+                //which we going to use on all the pages 
+                $_SESSION['currentCustomer'] = new customer();
+                $_SESSION['currentCustomer']->load($currentCustomer->getCustomer_uuid());
+            }else{
+                $loginFailed = "Incorrect Username and password";
+            }
+        }
+    }else if(isset($_POST["logout"])){
+        //will delete the customer_uuid from session variable
+        //session_destroy();    //destroy is not working it brokes the code 
+        //this will realise all the variables under session global variable
+        session_unset();
+    }
+    
+    //this will decide whether to print login form or logout form
+    if(!isset($_SESSION['customer_uuid'])){ 
+        ?>
+        <div class="login-logout-form">
+            <h2>Login Form</h2>
+            <form action='<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>' method='POST'>
+                <p>
+                    <label>Username : </label><br/>
+                    <input type="text" name="userName"/>
+                    <label class="error-code-label">* <?php echo $errorUserName ?></label>
+                </p>
+                <p>
+                    <label>Password : </label><br/>
+                    <input type="password" name="password"/>
+                    <label class="error-code-label">* <?php echo $errorPassword ?></label>
+                </p>
+                <p class="button-section">
+                    <label class="error-code-label"> <?php echo $loginFailed ?></label>
+                    <input type="submit" value='Login' name="login" class="button"/>
+                </p>
+                <p>
+                    Need a user account ? <a href="<?php echo REGISTER_PAGE ?>">Register</a>
+                </p>
+            </form>
+        </div>
+        <?php
+    }else{
+        ?>
+        <div class="login-logout-form logout-form">
+            <h2>Welcome <span class="welcome-color"><?php echo $_SESSION['currentCustomer']->getFirstName()." ".$_SESSION['currentCustomer']->getLastName() ?></span></h2>
+            <form action='<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>' method='POST'>
+                <p class="button-section">
+                    <input type="submit" value='Logout' name="logout" class="button"/>
+                </p>
+            </form>
+        </div>
+        <?php
+    }
+}
+
+/**
+ * will generate HTML for register form
+ */
+function createRegisterForm(){
+    global $firstName;
+    global $lastName;
+    global $address;
+    global $city;
+    global $province;
+    global $postalCode;
+    global $userName;
+    global $password;
+    
+    global $errorFirstName;
+    global $errorLastName;
+    global $errorAddress;
+    global $errorCity;
+    global $errorProvince;
+    global $errorPostalCode;
+    global $errorUserName;
+    global $errorPassword;
+    
+    global $currentCustomer;
+    
+    if(isset($_POST["register"])){
+        $firstName = htmlspecialchars(trim($_POST['firstName']));
+        $lastName = htmlspecialchars(trim($_POST['lastName']));
+        $address = htmlspecialchars(trim($_POST['address']));
+        $city = htmlspecialchars(trim($_POST['city']));
+        $province = htmlspecialchars(trim($_POST['province']));
+        $postalCode = htmlspecialchars(trim($_POST['postalCode']));
+        $userName = htmlspecialchars(trim($_POST['userName']));
+        $password = htmlspecialchars(trim($_POST['password']));
+        
+        $currentCustomer = new customer();
+        $errorFirstName = $currentCustomer->setFirstName($firstName);
+        $errorLastName = $currentCustomer->setLastName($lastName);
+        $errorAddress = $currentCustomer->setAddress($address);
+        $errorCity = $currentCustomer->setCity($city);
+        $errorProvince = $currentCustomer->setProvince($province);
+        $errorPostalCode= $currentCustomer->setPostalCode($postalCode);
+        $errorUserName = $currentCustomer->setUserName($userName);
+        $errorPassword = $currentCustomer->setPassword($password);
+        
+        if($errorFirstName == "" && $errorLastName == "" && $errorAddress == "" && $errorCity == "" && $errorProvince == "" && $errorPostalCode == "" && $errorUserName == "" && $errorPassword == ""){
+            
+            //saving the current customer inside the database
+            $currentCustomer->save();
+            
+            //clear the variables
+            $firstName = "";
+            $lastName = "";
+            $address = "";
+            $city = "";
+            $province = "";
+            $postalCode = "";
+            $userName = "";
+            $password = "";
+            
+            //confirmation for the user that account has been created
+            ?>
+                <script>alert("Your account is created successfully!");</script>
+            <?php
+        }    
+    }
+    
+    ?>
+        <div class="buying-form">
+            <h2>Register Form</h2>
+            <form action='<?php echo REGISTER_PAGE ?>' method='POST'>
+                <p>
+                    <label>First Name : </label><br/>
+                    <input type="text" name="firstName" value="<?php echo $firstName ?>"/>
+                    <label class="error-code-label">* <?php echo $errorFirstName ?></label>
+                </p>
+                <p>
+                    <label>Last Name : </label><br/>
+                    <input type="text" name="lastName" value="<?php echo $lastName ?>"/>
+                    <label class="error-code-label">* <?php echo $errorLastName ?></label>
+                </p>
+                <p>
+                    <label>Address : </label><br/>
+                    <input type="text" name="address" value="<?php echo $address ?>"/>
+                    <label class="error-code-label">* <?php echo $errorAddress ?></label>
+                </p>
+                <p>
+                    <label>City : </label><br/>
+                    <input type="text" name="city" value="<?php echo $city ?>"/>
+                    <label class="error-code-label">* <?php echo $errorCity ?></label>
+                </p>
+                <p>
+                    <label>Province : </label><br/>
+                    <input type="text" name="province" value="<?php echo $province ?>"/>
+                    <label class="error-code-label">* <?php echo $errorProvince ?></label>
+                </p>
+                <p>
+                    <label>Postal Code : </label><br/>
+                    <input type="text" name="postalCode" value="<?php echo $postalCode ?>"/>
+                    <label class="error-code-label">* <?php echo $errorPostalCode ?></label>
+                </p>
+                <p>
+                    <label>Username : </label><br/>
+                    <input type="text" name="userName" value="<?php echo $userName ?>"/>
+                    <label class="error-code-label">* <?php echo $errorUserName ?></label>
+                </p>
+                <p>
+                    <label>Password : </label><br/>
+                    <input type="password" name="password" value="<?php echo $password ?>"/>
+                    <label class="error-code-label">* <?php echo $errorPassword ?></label>
+                </p>
+                <p class="button-section">
+                    <input type="submit" value='Register' name="register" class="button"/>
+                    <!--Here type= reset was not working because we use value attribute in inputs so i just reload the page-->
+                    <input type="reset" value='Clear' onclick="window.location.href = window.location.href" name="reset" class="button"/>
+                </p>
+            </form>
+        </div>
+    <?php
 }

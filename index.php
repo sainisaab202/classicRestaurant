@@ -21,19 +21,12 @@ require_once PHP_FUNCTIONS;
 // Calling to generate header part of html
 createPageHeader("Home");
 //-----------------------------------------
-require_once PHP_FOLDER.'customer.php';
-require_once PHP_FOLDER.'product.php';
-require_once PHP_FOLDER.'purchase.php';
-$p = new purchase();
-$p->load("ca0f24ac-9642-11eb-a837-f8b46a16d3b5");
-$p->setSalePrice("10");
-if($p->save()){
-    echo "done";
-}else{
-    echo"no";
-}
-var_dump($p);
 
+
+//$custs = new purchases("be878f0b-963f-11eb-a837-f8b46a16d3b5");
+//foreach ($custs->items as $c) {
+//    var_dump($c);
+//}
 //------------------------------------------
 
 //////---------------------------------------------------------
