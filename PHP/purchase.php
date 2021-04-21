@@ -4,6 +4,11 @@
 #Gurpreet(1911343)   17/04/2021  created class purchase and constructor
 #                                declared required constants, getters and setters
 #Gurpreet(1911343)   18/04/2021  Created methods: load, save, delete
+#Gurpreet(1911343)   20/04/2021  Change max_sold_quantity constant to 99 from 999
+#                                Added new fields: subTotal, taxesAmount and GrandTotal
+#                                Added new getters, setters and modify other methods
+
+
 
 
 //constant for required files
@@ -13,7 +18,7 @@ require_once DB_CONNECTION;
 
 class purchase{
     //some constants
-    const MAX_SOLD_QUANTITY = 999;
+    const MAX_SOLD_QUANTITY = 99;
     const MAX_PRICE = 10000;
     const MAX_LENGTH_COMMENT = 200;
     const MAX_NUMS_AFTER_DECIMAL = 2;
@@ -28,12 +33,15 @@ class purchase{
     private $comment=null;
     private $created="";
     private $lastModified="";
+    private $subTotal="";
+    private $taxesAmount="";
+    private $grandTotal="";
     
     /**
      * fully parameterized constructor use only when reading from the database
      */
     public function __construct($purchase_uuid="", $customer_uuid="", $product_uuid="", $soldQuantity="",
-            $salePrice="", $comment="", $created="", $lastModified="") {
+            $salePrice="", $comment="", $created="", $lastModified="", $subTotal="", $taxesAmount="", $grandTotal="") {
         if($purchase_uuid != ""){
             $this->setPurchase_uuid($purchase_uuid);
         }
@@ -54,6 +62,9 @@ class purchase{
         }
         $this->created = $created;
         $this->lastModified = $lastModified;
+        $this->subTotal = $subTotal;
+        $this->taxesAmount = $taxesAmount;
+        $this->grandTotal = $grandTotal;
     }
     
     //getters and setter for our private attributes
@@ -64,19 +75,19 @@ class purchase{
         }
     }
     
-    private function setCustomer_uuid($customer_uuid){
+    //public getters and setters
+    public function setCustomer_uuid($customer_uuid){
         if(mb_strlen($customer_uuid) == self::MAX_LENGTH_UUID){
             $this->customer_uuid = $customer_uuid;
         }
     }
     
-    private function setProduct_uuid($product_uuid){
+    public function setProduct_uuid($product_uuid){
         if(mb_strlen($product_uuid) == self::MAX_LENGTH_UUID){
             $this->product_uuid = $product_uuid;
         }
     }
     
-    //public getters and setters
     public function getPurchase_uuid(){
         return $this->purchase_uuid;
     }
@@ -147,6 +158,30 @@ class purchase{
         return $this->lastModified;
     }
     
+    public function setSubTotal($subTotal){
+        $this->subTotal = round($subTotal, self::MAX_NUMS_AFTER_DECIMAL);
+    }
+    
+    public function getSubTotal(){
+        return $this->subTotal;
+    }
+    
+    public function setTaxesAmount($taxesAmount){
+        $this->taxesAmount = round($taxesAmount, self::MAX_NUMS_AFTER_DECIMAL);
+    }
+    
+    public function getTaxesAmount(){
+        return $this->taxesAmount;
+    }
+    
+    public function setGrandTotal($grandTotal){
+        $this->grandTotal = round($grandTotal, self::MAX_NUMS_AFTER_DECIMAL);
+    }
+    
+    public function getGrandTotal(){
+        return $this->grandTotal;
+    }
+    
     /**
      * Will load all the fields from database of specified primary key
      * @param string $purchase_uuid   is primary key of purchase
@@ -170,6 +205,9 @@ class purchase{
             $this->setComment($row["purchase_comment"]);
             $this->created = $row["purchase_created"];
             $this->lastModified = $row["purchase_lastModified"];
+            $this->subTotal = $row["purchase_subTotal"];
+            $this->taxesAmount = $row["purchase_taxesAmount"];
+            $this->grandTotal = $row["purchase_grandTotal"];
             
             //closing our statement
             $PDOStatement->closeCursor();
@@ -188,10 +226,10 @@ class purchase{
         //to check if we need to use insert or update purchase
         if($this->purchase_uuid==""){
             $sqlQuery = "CALL purchases_insert(:customer_uuid, :product_uuid, :soldQuantity,"
-                    . " :salePrice, :comment);";
+                    . " :salePrice, :comment, :subTotal, :taxesAmount, :grandTotal);";
         }else{
             $sqlQuery = "CALL purchases_update(:purchase_uuid, :customer_uuid, :product_uuid, :soldQuantity,"
-                    . " :salePrice, :comment);";
+                    . " :salePrice, :comment, :subTotal, :taxesAmount, :grandTotal);";
         }
 
         $PDOStatement = $connection->prepare($sqlQuery);
@@ -203,6 +241,9 @@ class purchase{
         $PDOStatement->bindParam(":soldQuantity", $this->soldQuantity);
         $PDOStatement->bindParam(":salePrice", $this->salePrice);
         $PDOStatement->bindParam(":comment", $this->comment);
+        $PDOStatement->bindParam(":subTotal", $this->subTotal);
+        $PDOStatement->bindParam(":taxesAmount", $this->taxesAmount);
+        $PDOStatement->bindParam(":grandTotal", $this->grandTotal);
         
 
         $result = $PDOStatement->execute();

@@ -17,6 +17,9 @@
 #Gurpreet(1911343)   19/04/2021  Declared function to create login and logout form
 #                                Declared constant for new page register.php
 #                                Defining function for register form
+#Gurpreet(1911343)   20/04/2021  Updated tax constant to 15.2%
+#                                Created buy form and did all the validation stuff
+#                                Added new pages in the navigation bar
 
 
 //Declaring some CONSTANTS
@@ -51,6 +54,8 @@ define('HOME_PAGE', 'index.php');
 define('BUYING_PAGE', 'buying.php');
 define('ORDER_PAGE', 'order.php');
 define('REGISTER_PAGE', 'register.php');
+define('BUY_PAGE', 'buy.php');
+define('PURCHASES_PAGE', 'purchases.php');
 
 //CopyRight name
 define('COPYRIGHT_NAME', 'GurPreet SaiNi (1911343)');
@@ -69,7 +74,7 @@ define('FORM_MAX_COMMENT',200);
 define('FORM_MAX_PRICE',10000);
 define('FORM_MAX_QUANTITY',99);
 define('FORM_MIN_QUANTITY',1);
-define('FORM_LOCAL_TAX_PER', 12.05);
+define('FORM_LOCAL_TAX_PER', 15.2);     //updated tax as mentioned in project 3
 define('FORM_NUMS_AFTER_DECIMAL', 2);
 
 //Global Variables
@@ -195,6 +200,8 @@ function createNavigationMenu(){
                 <li><a href="<?php echo HOME_PAGE; ?>">Home</a></li>
                 <li><a href="<?php echo BUYING_PAGE; ?>">Buying</a></li>
                 <li><a href="<?php echo ORDER_PAGE; ?>">Order</a></li>
+                <li><a href="<?php echo BUY_PAGE; ?>">Buy</a></li>
+                <li><a href="<?php echo PURCHASES_PAGE; ?>">Purchases</a></li>
             </ul>
         </div>
     <?php
@@ -762,4 +769,138 @@ function createRegisterForm(){
             </form>
         </div>
     <?php
+}
+
+/**
+ * will generate HTML for BUY form
+ */
+function createBuyForm(){
+    global $productCode;
+    global $comment;
+    global $quantity;
+    
+    global $errorProductCode;
+    global $errorComment;
+    global $errorQuantity;
+    if(!isset($_SESSION['customer_uuid'])){ 
+        ?>
+                <script>alert("In order to access this page, You need to login first!!");</script>
+        <?php
+    }else{
+        //for our option list inside html 
+        $products = new products();
+        
+        //will validate if its a valid purchase //meaning validate all fields
+        if(isset($_POST["buy"])){
+            $productCode = htmlspecialchars(trim($_POST['productCode']));
+            $comment = htmlspecialchars(trim($_POST['comment']));
+            $quantity = htmlspecialchars(trim($_POST['quantity']));
+            
+            //to access the price of our product
+            $product = new product();
+            //to create this new purchase
+            $aPurchase = new purchase();
+            
+            if($productCode == "-1"){
+                $errorProductCode = "You must choose a product to proceed your purchase order.";
+            }else{
+                if($product->load($productCode)){
+                    $aPurchase->setProduct_uuid($product->getProduct_uuid());
+                }
+            }
+            //we gonna get error msg if these two are not valid
+            $errorComment = $aPurchase->setComment($comment);
+            $errorQuantity = $aPurchase->setSoldQuantity($quantity);
+            
+            //checking if we got any error and if not than complete this purchase
+            if($errorProductCode == "" && $errorComment == "" && $errorQuantity == ""){
+                
+                //getting customer_uuid from global variable 
+                $aPurchase->setCustomer_uuid(htmlspecialchars($_SESSION["customer_uuid"]));
+                
+                $price = $product->getPrice();
+                $aPurchase->setSalePrice($price);
+                //we are rounding up inside the class method means method will just save only 2 digits after decimal
+                $aPurchase->setSubTotal($price * $quantity);
+                $aPurchase->setTaxesAmount($aPurchase->getSubTotal() * FORM_LOCAL_TAX_PER / 100);
+                $aPurchase->setGrandTotal($aPurchase->getSubTotal() + $aPurchase->getTaxesAmount());
+                
+                $productCode = "";
+                $comment = "";
+                $quantity = "";
+                
+                //if save succeed redirect to purchases page
+                if($aPurchase->save()){                    
+                    header("Location: https://".$_SERVER['HTTP_HOST']."/".explode('/', $_SERVER['REQUEST_URI'])[1]."/".PURCHASES_PAGE);
+                    exit();
+                }else{
+                    ?>
+                    <script>alert("Something went wrong, Your order is not placed!!");</script>    
+                    <?php
+                }
+            }
+        }
+        ?>
+            <div class="buying-form buy-form">
+                <h2>Buy Form</h2>
+                <form action='<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>' method='POST'>
+                    <p>
+                    <label>Product Code : </label><br/>
+                    <select name="productCode" id="productCode">
+                        <option value="-1">
+                            -- Choose an Option --
+                        </option>
+                        <?php foreach ($products->items as $aProduct) { ?>
+                        <option value="<?php echo $aProduct->getProduct_uuid(); ?>" <?php if($productCode == $aProduct->getProduct_uuid()){echo "selected";} ?>>
+                            <?php echo $aProduct->getProductCode()." - ".$aProduct->getDescription()." (".$aProduct->getPrice().")"; ?>
+                        </option>
+                        <?php } ?>
+                    </select>
+                    <label class="error-code-label">* <?php echo $errorProductCode ?></label>
+                    </p>
+                    <p>
+                        <label>Comments : </label><br/>
+                        <textarea name="comment" rows="3" cols="30" maxlength="200"><?php echo $comment ?></textarea>
+                        <label class="error-code-label"><?php echo $errorComment ?></label>
+                    </p>
+                    <p>
+                        <label>Quantity : </label><br/>
+                        <input type="number" name="quantity" value="<?php echo $quantity ?>"/>
+                        <label class="error-code-label">* <?php echo $errorQuantity ?></label>
+                    </p>
+                    <p class="button-section">
+                        <input type="submit" value='Buy' name="buy" class="button"/>
+                        <!--Here type= reset was not working because we use value attribute in inputs so i just reload the page-->
+                        <input type="reset" value='Clear' onclick="window.location.href = window.location.href" name="reset" class="button"/>
+                    </p>
+                </form>
+            </div>
+        <?php
+    }
+}
+
+/**
+ * will generate HTML for Purchase Search Form
+ */
+function createPurchaseSearchForm(){
+    if(!isset($_SESSION['customer_uuid'])){ 
+        ?>
+                <script>alert("In order to access this page, You need to login first!!");</script>
+        <?php
+    }else{
+        ?>
+        <div class="buying-form buy-form">
+            <h2>Purchase Search</h2>
+            <form action='<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>' method='POST'>
+                <p>
+                    <label>Show purchases made on this date or later:   </label>
+                    <input type="text" name="searchDate" placeholder="yyyy-mm-dd"/>
+                    <p class="button-section">
+                        <input type="submit" value='Search' name="search" class="button"/>
+                    </p>
+                </p>
+            </form>
+        </div>
+        <?php
+    }
 }

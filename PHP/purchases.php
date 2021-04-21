@@ -1,6 +1,7 @@
 <?php
 ##DEVELOPER          DATE        COMMENTS
 #Gurpreet(1911343)   18/04/2021  created class purchases which inherits from collection
+#Gurpreet(1911343)   20/04/2021  added 3 more fields when creating a purchase subTotal, taxesAmount, grandTotal
 
 //for our database
 require_once 'connection.php';
@@ -34,7 +35,8 @@ class purchases extends collection{
         while($row = $PDOStatement->fetch()){
             $aPurchase = new purchase($row["purchase_uuid"], $row["customer_uuid"], $row["product_uuid"],
                     $row["purchase_soldQuantity"], $row["purchase_salePrice"], $row["purchase_comment"], 
-                        $row["purchase_created"], $row["purchase_lastModified"]);
+                        $row["purchase_created"], $row["purchase_lastModified"],
+                    $row["purchase_subTotal"], $row["purchase_taxesAmount"], $row["purchase_grandTotal"]);
             
             $this->add($row["purchase_uuid"], $aPurchase);
         }

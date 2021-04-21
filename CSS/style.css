@@ -97,6 +97,7 @@ body{height:100%}
 }
 
 /* for form Buying page -----------------------------------------*/
+/*--------------------------------USED BY REGISTER form as well as BUY form*/
 .buying-form{
     margin: 150px auto;
     width: 500px;
@@ -269,4 +270,12 @@ body{height:100%}
 }
 .welcome-color{
     color: #e4452a;
+}
+
+/*----BUY form----*/
+.buy-form{
+    margin: 150px auto;
+    width: 600px;
+    border: 5px dotted #47210b;
+    padding: 20px 15px;
 }
