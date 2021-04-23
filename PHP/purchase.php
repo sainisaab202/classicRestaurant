@@ -96,7 +96,7 @@ class purchase{
         return $this->customer_uuid;
     }
     
-    public function getproduct_uuid(){
+    public function getProduct_uuid(){
         return $this->product_uuid;
     }
     

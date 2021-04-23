@@ -2,6 +2,7 @@
 ##DEVELOPER          DATE        COMMENTS
 #Gurpreet(1911343)   18/04/2021  created class purchases which inherits from collection
 #Gurpreet(1911343)   20/04/2021  added 3 more fields when creating a purchase subTotal, taxesAmount, grandTotal
+#Gurpreet(1911343)   22/04/2021  added date feature in the constructor so we can search by date as well
 
 //for our database
 require_once 'connection.php';
@@ -15,7 +16,7 @@ require_once CLASS_PURCHASE;
 class purchases extends collection{
     
     //this will take all the stuff from database and put inside our collection
-    function __construct($customer_uuid="") {
+    function __construct($customer_uuid="", $aDate="") {
         global $connection;
         
         $sqlQuery = "CALL purchases_select();";
@@ -23,11 +24,17 @@ class purchases extends collection{
         if($customer_uuid != ""){             //here we passing '' to procedure because it works without date
             $sqlQuery = "CALL purchases_filterCustomer(:customer_uuid, '');";
         }
+        if($customer_uuid != "" && $aDate != ""){   //and here is with date
+            $sqlQuery = "CALL purchases_filterCustomer(:customer_uuid, :aDate);";
+        }
         
         $PDOStatement = $connection->prepare($sqlQuery);
         
         if($customer_uuid != ""){
             $PDOStatement->bindParam(":customer_uuid", $customer_uuid);
+            if($aDate != ""){
+               $PDOStatement->bindParam(":aDate", $aDate);
+            }  
         }
         
         $PDOStatement->execute();

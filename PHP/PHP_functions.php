@@ -20,6 +20,9 @@
 #Gurpreet(1911343)   20/04/2021  Updated tax constant to 15.2%
 #                                Created buy form and did all the validation stuff
 #                                Added new pages in the navigation bar
+#Gurpreet(1911343)   21/04/2021  Updated Register form so that we can use it for account info update as well
+#                                Created script file to search for purchases with AJAX
+#                                constants for file name and folder
 
 
 //Declaring some CONSTANTS
@@ -77,6 +80,10 @@ define('FORM_MIN_QUANTITY',1);
 define('FORM_LOCAL_TAX_PER', 15.2);     //updated tax as mentioned in project 3
 define('FORM_NUMS_AFTER_DECIMAL', 2);
 
+//constant for our script file
+define('FOLDER_SCRIPT', 'SCRIPT/');
+define('FILE_SCRIPT_PURCHASES', FOLDER_SCRIPT.'searchPurchases.js');
+
 //Global Variables
 $productCode = "";
 $firstName = "";
@@ -115,6 +122,8 @@ $errorPostalCode = "";
 //this and some other we already have for other stuff
 //$errorUserName = "";
 //$errorPassword = "";
+
+$registerOrUpdate = "Register";
 
 //for css with URL parameters
 $arguBackground = "";
@@ -156,12 +165,17 @@ function createPageHeader($title){
     session_start();
     global $arguBackground;
     
+    //will check if its a form for update or register
+    if(strtolower($title) == "register" && isset($_SESSION["currentCustomer"])){
+        $title = "Update";
+    }
     ?>
     <!DOCTYPE html>
         <html>
             <head>
                 <meta charset="UTF-8">
                 <link rel="stylesheet" type="text/css" href="<?php echo FILE_CSS ?>">
+                <script language="javascript" type="text/javascript" src="<?php echo FILE_SCRIPT_PURCHASES; ?>" ></script>
                 <title><?php echo "$title | Classic Restaurant"; ?></title>
             </head>
             <body class="bg-color-lightcyan <?php echo $arguBackground ?>">
@@ -202,6 +216,9 @@ function createNavigationMenu(){
                 <li><a href="<?php echo ORDER_PAGE; ?>">Order</a></li>
                 <li><a href="<?php echo BUY_PAGE; ?>">Buy</a></li>
                 <li><a href="<?php echo PURCHASES_PAGE; ?>">Purchases</a></li>
+                <?php if(isset($_SESSION["currentCustomer"])){ ?>
+                    <li><a href="<?php echo REGISTER_PAGE; ?>">Account</a></li>
+                <?php } ?>
             </ul>
         </div>
     <?php
@@ -600,6 +617,9 @@ function createLoginLogoutForm(){
                 //which we going to use on all the pages 
                 $_SESSION['currentCustomer'] = new customer();
                 $_SESSION['currentCustomer']->load($currentCustomer->getCustomer_uuid());
+                
+                //to load all things on our navigation (account)
+                header("Refresh:0");
             }else{
                 $loginFailed = "Incorrect Username and password";
             }
@@ -609,6 +629,11 @@ function createLoginLogoutForm(){
         //session_destroy();    //destroy is not working it brokes the code 
         //this will realise all the variables under session global variable
         session_unset();
+        
+        //this will refresh the page
+        //we need this because if a customer logout in account.php then we need to clear all info
+        header("Refresh:0");
+        exit();
     }
     
     //this will decide whether to print login form or logout form
@@ -675,6 +700,31 @@ function createRegisterForm(){
     
     global $currentCustomer;
     
+    global $registerOrUpdate;
+    
+    //will choose whether its a form for update or a new register
+    if(isset($_SESSION["currentCustomer"])){ 
+        $registerOrUpdate = "Update"; 
+        
+        $currentCustomer = new customer();
+        $currentCustomer->load(htmlspecialchars($_SESSION["currentCustomer"]->getCustomer_uuid()));
+        
+        $firstName = $currentCustomer->getFirstName();
+        $lastName = $currentCustomer->getLastName();
+        $address = $currentCustomer->getAddress();
+        $city = $currentCustomer->getCity();
+        $province = $currentCustomer->getProvince();
+        $postalCode = $currentCustomer->getPostalCode();
+        $userName = $currentCustomer->getUserName();
+        
+        //we don't need this here because we show on each page except Register
+//        createLoginLogoutForm();
+    }
+    else { 
+        $registerOrUpdate = "Register"; 
+        $currentCustomer = new customer();
+    }
+    
     if(isset($_POST["register"])){
         $firstName = htmlspecialchars(trim($_POST['firstName']));
         $lastName = htmlspecialchars(trim($_POST['lastName']));
@@ -685,7 +735,7 @@ function createRegisterForm(){
         $userName = htmlspecialchars(trim($_POST['userName']));
         $password = htmlspecialchars(trim($_POST['password']));
         
-        $currentCustomer = new customer();
+        
         $errorFirstName = $currentCustomer->setFirstName($firstName);
         $errorLastName = $currentCustomer->setLastName($lastName);
         $errorAddress = $currentCustomer->setAddress($address);
@@ -697,7 +747,7 @@ function createRegisterForm(){
         
         if($errorFirstName == "" && $errorLastName == "" && $errorAddress == "" && $errorCity == "" && $errorProvince == "" && $errorPostalCode == "" && $errorUserName == "" && $errorPassword == ""){
             
-            //saving the current customer inside the database
+            //saving the current customer inside the database (will check if its update or insert)
             $currentCustomer->save();
             
             //clear the variables
@@ -710,16 +760,22 @@ function createRegisterForm(){
             $userName = "";
             $password = "";
             
-            //confirmation for the user that account has been created
-            ?>
+            //confirmation for the user that account has been created or updated
+            if(isset($_SESSION["currentCustomer"])){
+                ?>
+                <script>alert("Your account information updated successfully!");</script>
+                <?php
+            }else{
+                ?>
                 <script>alert("Your account is created successfully!");</script>
-            <?php
+                <?php
+            }
         }    
     }
     
     ?>
         <div class="buying-form">
-            <h2>Register Form</h2>
+            <h2><?php echo $registerOrUpdate; ?> - Form</h2>
             <form action='<?php echo REGISTER_PAGE ?>' method='POST'>
                 <p>
                     <label>First Name : </label><br/>
@@ -762,7 +818,7 @@ function createRegisterForm(){
                     <label class="error-code-label">* <?php echo $errorPassword ?></label>
                 </p>
                 <p class="button-section">
-                    <input type="submit" value='Register' name="register" class="button"/>
+                    <input type="submit" value='<?php echo $registerOrUpdate; ?>' name="register" class="button"/>
                     <!--Here type= reset was not working because we use value attribute in inputs so i just reload the page-->
                     <input type="reset" value='Clear' onclick="window.location.href = window.location.href" name="reset" class="button"/>
                 </p>
@@ -882,7 +938,8 @@ function createBuyForm(){
 /**
  * will generate HTML for Purchase Search Form
  */
-function createPurchaseSearchForm(){
+function createPurchaseSearchForm(){    
+    //will show the table if user is connected and hit's the search button
     if(!isset($_SESSION['customer_uuid'])){ 
         ?>
                 <script>alert("In order to access this page, You need to login first!!");</script>
@@ -891,16 +948,30 @@ function createPurchaseSearchForm(){
         ?>
         <div class="buying-form buy-form">
             <h2>Purchase Search</h2>
-            <form action='<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>' method='POST'>
                 <p>
                     <label>Show purchases made on this date or later:   </label>
-                    <input type="text" name="searchDate" placeholder="yyyy-mm-dd"/>
+                    <input type="text" name="searchDate" id="searchDate" placeholder="yyyy-mm-dd"/>
+                    <input type="hidden" id="customer_uuid" value="<?php echo $_SESSION['customer_uuid'] ?>"/>
                     <p class="button-section">
-                        <input type="submit" value='Search' name="search" class="button"/>
+                        <input type="button" value='Search' name="search" class="button" onclick="searchPurchases();"/>
                     </p>
                 </p>
-            </form>
         </div>
         <?php
+    }
+    
+    //to delete a purchase of a customer
+    if(isset($_POST['delete'])){
+        $purchase_uuid = htmlspecialchars($_POST['purchase_uuid']);
+        
+        $aPurchase = new purchase($purchase_uuid);
+        
+        if($aPurchase->delete()){
+                //here we will load our purchases again once our website is fully loaded because
+                //our div container for the table is after this function call
+            ?>
+                <script>window.onload = function () { searchPurchases(); };</script>
+            <?php   
+        }
     }
 }
