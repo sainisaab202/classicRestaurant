@@ -23,6 +23,9 @@
 #Gurpreet(1911343)   21/04/2021  Updated Register form so that we can use it for account info update as well
 #                                Created script file to search for purchases with AJAX
 #                                constants for file name and folder
+#Gurpreet(1911343)   24/04/2021  Added a css class for Register Form
+#Gurpreet(1911343)   28/04/2021  Edited registerUpdate function now clear button will appear only at register and not on update
+#Gurpreet(1911343)   28/04/2021  Project part-3 finished 100%
 
 
 //Declaring some CONSTANTS
@@ -64,8 +67,8 @@ define('PURCHASES_PAGE', 'purchases.php');
 define('COPYRIGHT_NAME', 'GurPreet SaiNi (1911343)');
 
 //turn debug true if you are modifying code else keep it false
-//define('DEBUG', false);
-define('DEBUG', true);
+define('DEBUG', false);
+//define('DEBUG', true);
 define('FILE_LOGS', FOLDER_DATA.'logsFile.txt');
 
 //constants for Minumum and maximum for forms
@@ -677,9 +680,9 @@ function createLoginLogoutForm(){
 }
 
 /**
- * will generate HTML for register form
+ * will generate HTML for register form also we used it for Update
  */
-function createRegisterForm(){
+function createRegisterUpdateForm(){
     global $firstName;
     global $lastName;
     global $address;
@@ -762,6 +765,8 @@ function createRegisterForm(){
             
             //confirmation for the user that account has been created or updated
             if(isset($_SESSION["currentCustomer"])){
+                //to update even in our current website variable
+                $_SESSION["currentCustomer"]->load($currentCustomer->getCustomer_uuid());
                 ?>
                 <script>alert("Your account information updated successfully!");</script>
                 <?php
@@ -774,7 +779,7 @@ function createRegisterForm(){
     }
     
     ?>
-        <div class="buying-form">
+                <div class="buying-form <?php if(!isset($_SESSION["currentCustomer"])){echo "register-form";} ?>">
             <h2><?php echo $registerOrUpdate; ?> - Form</h2>
             <form action='<?php echo REGISTER_PAGE ?>' method='POST'>
                 <p>
@@ -820,7 +825,14 @@ function createRegisterForm(){
                 <p class="button-section">
                     <input type="submit" value='<?php echo $registerOrUpdate; ?>' name="register" class="button"/>
                     <!--Here type= reset was not working because we use value attribute in inputs so i just reload the page-->
-                    <input type="reset" value='Clear' onclick="window.location.href = window.location.href" name="reset" class="button"/>
+                    <?php
+                    //this will show clear button only if it is a register and not appear on update
+                    if(!isset($_SESSION["currentCustomer"])){
+                        ?>
+                        <input type="reset" value='Clear' onclick="window.location.href = window.location.href" name="reset" class="button"/>
+                        <?php
+                    }
+                    ?>
                 </p>
             </form>
         </div>
@@ -950,7 +962,7 @@ function createPurchaseSearchForm(){
             <h2>Purchase Search</h2>
                 <p>
                     <label>Show purchases made on this date or later:   </label>
-                    <input type="text" name="searchDate" id="searchDate" placeholder="yyyy-mm-dd"/>
+                    <input type="text" name="searchDate" id="searchDate" placeholder="yyyy-mm-dd (optional)"/>
                     <input type="hidden" id="customer_uuid" value="<?php echo $_SESSION['customer_uuid'] ?>"/>
                     <p class="button-section">
                         <input type="button" value='Search' name="search" class="button" onclick="searchPurchases();"/>

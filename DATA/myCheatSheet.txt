@@ -140,6 +140,15 @@ compile error: code does not start
 runtime error: division by zero
 logical error: doing something wrong logically
 
+
+-----------------Page cache	//to prevent using cache of browser
+header("Expires: Thu, 01 Dec 1994 08:00:00 GMT");
+
+//for cache
+header("Cache-Control: no-cache");
+
+header("Pragma: no-cache");
+
 ---- starting new website
 
 ----GIT
@@ -156,3 +165,206 @@ black: save correctly in Git
 
 4) Everyday of work, right click on Project -> Git -> Commit
 5) Type-in commit message and commit your work.
+
+--------------------------------------------------------------------------------------------
+
+---- GLOBAL Variable
+$_GET: is a variable works with the arguments from url
+$_POST:  is a variable works with the argument from the form of a website 
+$_COOKIE: is a variable works with the cookies stuff of a website
+$_SESSION: is a variable works with the temperory cookies and simillar to cookie
+
+project name firstName
+setcookie("name", "value") : use to set the cookie for a website
+setcookie("name", "value", time()+10(sec)) : use to set the cookie for a website with expiry time
+
+//for session we need to start a session in the starting of a website
+session_start();	will start the session
+$_SESSION['anyVariableName'] = valueToSave	will store a variable and its value 
+session_destroy; 	will stop and unset all the values that $_SESSION handles
+
+---------HTTPS---------
+for HTTP we use port 80
+for HTTPS we use port 443
+to create privateKey and certificate in linux:
+openssl req -x509 -newkey rsa:4096 -keyout jf.key -out jf.crt -days 365 -nodes(-days 365 is optional, -nodes mean no password)
+for windows: (you need to install cygwin)
+2.a)
+c:\cygwin64\bin\openssl req -x509 -newkey rsa:4096 -days 365 -nodes -keyout jf.key -out jf.crt
+b)
+c:\cygwin64\bin\openssl
+OpenSSL> req -x509 -newkey rsa:4096 -days 365 -nodes -keyout jf.key -out jf.crt
+	(your file should be created in the current folder)
+3. copy the .crt file into the c:\xampp\apache\conf\ssl.crt folder
+   copy the .key file into the c:\xampp\apache\conf\ssl.key folder
+4. edit the httpd-ssl.conf file:
+	SSLCertificateFile conf/ssl/crt/jf.crt
+	SSLCERTificateKeyFile conf/ssl.key/jf.key
+5. restart apache
+7. in browser use https before your site
+8. review your certificate
+--------------------------
+
+--To force any website to use secure connection(HTTPS)
+
+if(!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] != "on"){
+    header("Location: https://".$_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+    exit();
+}
+
+$_SERVER['HTTPS'] : is on when you use https connection (network protocol)
+$_SERVER['HTTP_HOST'] : to know the host of the website (localhost in our case)
+$_SERVER['REQUEST_URI'] : is the path of our website (starts from our project name in our case)
+
+---URL consists
+network protocol 	://	domain		/folders/file
+http or https		://	www.fb.com	/sainisaab202/profile
+
+----- 	MY-SQL
+Just try to connect, to confirm you have an empty root password
+1) Open a command prompt
+2) c:\xampp\mysql\bin\mysql.exe -u root -p
+	password: (just press ENTER)		now its asdf1234
+3) MySQL > select @@version;
+4) exit;
+-----------------
+To modify existing password:
+c:\xampp\mysql\bin\mysql.exe -u root password
+	password: type the new password and press ENTER
+
+HeidiSQL download to manage database
+
+------------------	also we NEVER send website to a client that use root
+Creating DB	(HeidiSQL)
+Collation: we use utf8mb4_general_ci which specify the language and the way our db stores.
+Name: we must use only lowercase letters and underscore to specify name of database.
+
+------------------ Each table
+MUST have column name starts with table name followed by underscore and real column name.
+MUST contain UUID as a primary KEY default with "SELECT UUID();"
+
+Most of the time we use VARCHAR but we use CHAR for uuid with length 36.
+CHAR, VARCHAR, INT, DECIMAL, BIT, DATE, DATETIME
+
+we use key usually on foreign key
+
+------------------ 
+We always put sql code under procedure not in php
+
+if we use SELECT in procedure and it returns more than ONE row we should use ORDER BY command
+
+------------------JOINS
+INNER JOIN : There must be data on each side of the join clause
+LEFT JOIN : must show all the data from the left table and related data from right table
+
+
+------------------To add a user for your database
+1. click on 2 faces(manage user)
+2. add->enter userName and password
+3. click objects -> select all views and procedure
+4. In each view/procedure select only SELECT/EXECUTE
+5. Save
+
+------------------To backup out database
+1. right click on database-> export to SQL
+2. we select db->check create database and table-> select single .sql file and name it
+show grants for user_name@localhost	//need to add permission in another file for project
+
+
+------------------to repair mysql installation (after update)
+c:\xampp\mysql\bin\mysql_upgrade.exe -u root -p -r
+
+
+------------------connecting php to database
+PDO (PHP data objects) : handle 12 databases
+	will raise errors and exceptions
+
+mySQLi (improved)    can connect only to mySQL databases
+	you need more conditions to check for valid data
+
+--connect with database
+$connectionName = new PDO("mysql:host=localhost; dbname=databaseName",userName, password);
+
+--to raise exception if our sql query is not valid 
+$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+--then we make query
+$SQLQuery = "our query or call to stored procedure";
+
+--then we prepare our query
+$PDOStatement = $connection->prepare($SQLQuery);
+
+--we bind our parameters with our sqlStatement
+$PDOStatement->bindParam(":variableNameinQUERY", $variableTheValue);
+
+--we execute
+$PDOStatement->execute();
+
+--we can fetch row using loop or if depending on multiple result or single
+$row = $PDOStatement->fetch()
+
+--then close everything
+$PDOStatement->closeCursor();
+$PDOStatement = null;
+$connection = null;	//will close connection after all our queries
+
+
+-------------------to Encrypt our passwords inside PHP
+--encryption				//this is algo of hashing
+password_hash($PasswordVariable, PASSWORD_DEFAULT);	//will return an encrypted password
+	//even if password is same the result of this is different
+
+--decryption	//we can not decrypt but can verify it using:
+password_verify($userPass, $encryptedHashPass)	//will return true if same else false
+
+
+-------------------MVC		//MVVM (for cell phones)
+Model - View - Controller
+Model: classes / objects, business rules, centralized validation
+View: show the data received
+Controller: user input
+
+.exe: for executable (input / output)
+.dll: for libraries, objects
+
+-------------------Class
+Access modif
+public : can be accessed from outside of the object;
+private : can be accessed only from the current class;
+protected : can only be accessed by the classess that inherits the current class
+
+variables: properties like year, brand
+function : methods like sell, print
+
+getters: to read in our variables
+setters: to write in our variables
+
+self : use self keyword when you want to access CONSTANTS (self::) also use to access static membr
+this : use this keyword when you want to access VARIABLES (this->)
+
+const : we use const keyword before variable names to make them constant
+
+STATIC : it always exists all the time during the program execution.
+
+--------------------AJAX	-Asynchronous JavaScript And XML
+xhr variable is to make AJAX call
+
+var xhr = new XMLHttpRequest();
+
+xhr.open("POST", #pageThatHaveCode);
+
+//this will tell that only text stuff
+xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+
+//then we take the valuse of the things we gonna use like:
+var anYear = document.getElementById("anYear").value;
+
+//then we send our variables:
+xhr.send("Year=" + anYear);
+
+//calling function which will write respose to our current page
+xhr.onreadystatechange = function(){
+	if(xhr.readyState == 4 && xhr.status == 200){
+            document.getElementById("anyContainer").innerHTML = xhr.responseText;
+        }
+};

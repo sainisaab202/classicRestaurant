@@ -6,6 +6,7 @@
     #Gurpreet(1911343)   01/03/2021  modified css for advertisment
     #Gurpreet(1911343)   03/03/2021  added css for order page and table in that page
     #Gurpreet(1911343)   19/04/2021  added css for Login and logout form
+    #Gurpreet(1911343)   24/04/2021  added a css class for register form
     
 */
 
@@ -99,7 +100,7 @@ body{height:100%}
 /* for form Buying page -----------------------------------------*/
 /*--------------------------------USED BY REGISTER form as well as BUY form*/
 .buying-form{
-    margin: 150px auto;
+    margin: 50px auto;
     width: 500px;
     border: 5px dotted #47210b;
     padding: 20px 15px;
@@ -274,8 +275,13 @@ body{height:100%}
 
 /*----BUY form----*/
 .buy-form{
-    margin: 150px auto;
+    margin: 50px auto;
     width: 600px;
     border: 5px dotted #47210b;
     padding: 20px 15px;
+}
+
+/*----Register Form----*/
+.register-form{
+    margin: 150px auto;
 }

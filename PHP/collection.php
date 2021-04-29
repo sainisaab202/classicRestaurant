@@ -24,7 +24,7 @@ class collection{
     
     public function get($primary_key){   ##means uuid
         if(isset($this->items[$primary_key])){
-            return $this->items[$primary_key];  //to remove from our collection
+            return $this->items[$primary_key];
         }
         #return $item; //we don't need to but in case
     }

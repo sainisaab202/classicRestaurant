@@ -7,6 +7,8 @@
 #Gurpreet(1911343)   20/04/2021  Change max_sold_quantity constant to 99 from 999
 #                                Added new fields: subTotal, taxesAmount and GrandTotal
 #                                Added new getters, setters and modify other methods
+#Gurpreet(1911343)   28/04/2021  Adding two more variable that we gonna use to save objects for customer and purchase
+#                                I am not removing previous variable that i use to save uuid of things 
 
 
 
@@ -37,11 +39,17 @@ class purchase{
     private $taxesAmount="";
     private $grandTotal="";
     
+    //public variable to avoid multiple calls to the database
+    //also i am keeping customer_uuid and product_uuid variable to keep my current things working
+    public $customer=null;
+    public $product=null;
+    
     /**
      * fully parameterized constructor use only when reading from the database
      */
     public function __construct($purchase_uuid="", $customer_uuid="", $product_uuid="", $soldQuantity="",
-            $salePrice="", $comment="", $created="", $lastModified="", $subTotal="", $taxesAmount="", $grandTotal="") {
+            $salePrice="", $comment="", $created="", $lastModified="", $subTotal="", $taxesAmount="", $grandTotal="", 
+            $customer="", $product="") {
         if($purchase_uuid != ""){
             $this->setPurchase_uuid($purchase_uuid);
         }
@@ -65,6 +73,10 @@ class purchase{
         $this->subTotal = $subTotal;
         $this->taxesAmount = $taxesAmount;
         $this->grandTotal = $grandTotal;
+        
+        //for our object inside
+        $this->customer = $customer;
+        $this->product = $product;
     }
     
     //getters and setter for our private attributes

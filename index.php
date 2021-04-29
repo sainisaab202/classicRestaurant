@@ -6,6 +6,8 @@
 #Gurpreet(1911343)  05/03/2021  Testing ErrorHandling and Exception Handling by creating errors
 #Gurpreet(1911343)  05/03/2021  Project completed 100% (project 1)
 #Gurpreet(1911343)  15/04/2021  Created the key and certificate for ssl 
+#Gurpreet(1911343)  24/04/2021  Added a link where user can visit my cheatSheet file 
+#Gurpreet(1911343)  28/04/2021  Project finished 100% (FINAL)
 
 
 
@@ -20,14 +22,6 @@ require_once PHP_FUNCTIONS;
 
 // Calling to generate header part of html
 createPageHeader("Home");
-//-----------------------------------------
-
-
-//$custs = new purchases("be878f0b-963f-11eb-a837-f8b46a16d3b5");
-//foreach ($custs->items as $c) {
-//    var_dump($c);
-//}
-//------------------------------------------
 
 //////---------------------------------------------------------
 ////to create exception
@@ -46,6 +40,10 @@ createPageHeader("Home");
     </div>
     <div class='advertising-section'>
         <a href="https://www.doordash.com/" target="_blank"><?php displayAdvertisment() ?></a>
+    </div>
+
+    <div class="cheatSheet-download">
+        Visit my Cheat-Sheet 👉 <a href="<?php echo FILE_CHEATSHEET ?>" target="_blank">Here</a>.
     </div>
 <?php
 

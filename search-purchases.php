@@ -3,6 +3,8 @@
 #Gurpreet(1911343)  20/04/2021  Created search-purchases.php file 
 #                               this will generate html code for purchases as a table
 #Gurpreet(1911343)  22/04/2021  Added date to our search of customer so will get result after that date
+#Gurpreet(1911343)  28/04/2021  Modified and commented where we create aCustomer and aProduct
+#                               Instead of that we already have a customer object and a product object inside a purchase
 
 
 #--------------------------------------------------------------
@@ -30,8 +32,10 @@ if(isset($_POST['searchDate'])){
     $customer_uuid = htmlspecialchars($_POST['customer_uuid']);
     //here we need to plug date as well for now just to check if it works or no
     $purchases = new purchases($customer_uuid, $searchedDate);
-    $aCustomer = new customer();
-    $aCustomer->load($customer_uuid);
+    
+    //now we don't need to create customer here because we already have customer object inside a purchase
+//    $aCustomer = new customer();
+//    $aCustomer->load($customer_uuid);
     ?>
     <h2>Your Purchases</h2>
     <table>
@@ -50,8 +54,10 @@ if(isset($_POST['searchDate'])){
         </tr>
         <?php
         foreach ($purchases->items as $aPurchase){
-            $aproduct = new product();
-            $aproduct->load($aPurchase->getProduct_uuid());
+            
+            //Also here we don't need to create product because we already have it in our purchase
+//            $aproduct = new product();
+//            $aproduct->load($aPurchase->getProduct_uuid());
             ?>
         <tr>
             <td>
@@ -60,10 +66,10 @@ if(isset($_POST['searchDate'])){
                     <input type="hidden" name="purchase_uuid" value="<?php echo $aPurchase->getPurchase_uuid(); ?>">
                 </form>
             </td>
-            <td><?php echo $aproduct->getProductCode(); ?></td>
-            <td><?php echo $aCustomer->getFirstName(); ?></td>
-            <td><?php echo $aCustomer->getLastName(); ?></td>
-            <td><?php echo $aCustomer->getCity(); ?></td>
+            <td><?php echo $aPurchase->product->getProductCode(); ?></td>
+            <td><?php echo $aPurchase->customer->getFirstName(); ?></td>
+            <td><?php echo $aPurchase->customer->getLastName(); ?></td>
+            <td><?php echo $aPurchase->customer->getCity(); ?></td>
             <td><?php echo $aPurchase->getComment(); ?></td>
             <td><?php echo $aPurchase->getSalePrice().MONEY_SIGN;  ?></td>
             <td><?php echo $aPurchase->getSoldQuantity(); ?></td>

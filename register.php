@@ -17,8 +17,8 @@ require_once PHP_FUNCTIONS;
 // Calling to generate header part of html
 createPageHeader("Register");
 
-// calling regester form 
-createRegisterForm();
+// calling register form 
+createRegisterUpdateForm();
 
 //Calling closing part of html
 createPageFooter();
